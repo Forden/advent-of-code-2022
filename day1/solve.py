@@ -10,3 +10,5 @@ for i in lines:
         calories_by_deer[-1] += int(i)
 
 print(max(calories_by_deer))
+calories_by_deer.sort(reverse=True)
+print(sum(calories_by_deer[:3]))
