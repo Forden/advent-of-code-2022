@@ -3,26 +3,21 @@ with open('input.txt') as f:
 lines = [i.strip() for i in lines]
 
 
+def get_result(sector_size, line):
+    for ind, i in enumerate(range(0, len(line) - (sector_size - 1), 1)):
+        sector = line[i:i + sector_size]
+        if len({*sector}) == len([*sector]):
+            return ind + sector_size
+
+
 def part_1():
-    result = 0
-    for ind, i in enumerate(range(0, len(lines[0]) - 3, 1)):
-        sector = lines[0][i:i + 4]
-        print(sector)
-        if len(set([*lines[0][i:i + 4]])) == len([*lines[0][i:i + 4]]):
-            result = ind
-            break
-    return result + 4
+    result = get_result(4, lines[0])
+    return result
 
 
 def part_2():
-    result = 0
-    for ind, i in enumerate(range(0, len(lines[0]) - 13, 1)):
-        sector = lines[0][i:i + 14]
-        print(sector)
-        if len(set([*lines[0][i:i + 14]])) == len([*lines[0][i:i + 14]]):
-            result = ind
-            break
-    return result + 14
+    result = get_result(14, lines[0])
+    return result
 
 
 print(part_1())
