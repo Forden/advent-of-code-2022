@@ -16,7 +16,13 @@ def part_1():
 
 def part_2():
     result = 0
-    return result
+    for ind, i in enumerate(range(0, len(lines[0]) - 13, 1)):
+        sector = lines[0][i:i + 14]
+        print(sector)
+        if len(set([*lines[0][i:i + 14]])) == len([*lines[0][i:i + 14]]):
+            result = ind
+            break
+    return result + 14
 
 
 print(part_1())
