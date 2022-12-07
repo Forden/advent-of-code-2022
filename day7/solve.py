@@ -122,7 +122,6 @@ def part_2():
                 else:
                     if f_name not in disk[cwd]:
                         disk[cwd][f_name] = int(f_type)
-    print(disk)
     dir_sizes = {}
     for k, v in disk.items():
         dir_size = 0
@@ -131,25 +130,19 @@ def part_2():
                 if isinstance(in_v, int):
                     dir_size += in_v
         dir_sizes[k] = dir_size
-    print(dir_sizes)
     for k in dir_sizes.keys():
         for in_k, in_v in dir_sizes.items():
             if in_k == k:
                 continue
             if in_k.startswith(k):
                 dir_sizes[k] += in_v
-    print(dir_sizes)
     current_taken_space = dir_sizes['/']
     unused_space = total_disk_size - current_taken_space
     space_to_clean = minimum_needed - unused_space
-    print(space_to_clean)
-    print(current_taken_space)
     dir_to_clean = '/'
     for k, v in dir_sizes.items():
         if space_to_clean <= v < dir_sizes[dir_to_clean]:
             dir_to_clean = k
-        # if v <= 100000:
-        #     result += v
     return dir_sizes[dir_to_clean]
 
 
