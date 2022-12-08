@@ -32,7 +32,6 @@ def part_1():
 
 
 def part_2():
-    result = 0
     data = [[[int(i), False, 0] for i in row] for row in lines]
     for tree_row_ind, tree_row in enumerate(data):
         for tree_in_row_ind, tree in enumerate(tree_row):
@@ -67,9 +66,6 @@ def part_2():
                 else:
                     score[3] += 1
             tree[2] = score[0] * score[1] * score[2] * score[3]
-            print(
-                f'tree={tree} up={up}, down={down}, left={left}, right={right} {score=}'
-            )
     max_score = 4
     for row in data:
         for tree in row:
