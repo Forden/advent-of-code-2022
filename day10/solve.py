@@ -16,7 +16,6 @@ def part_1():
     x_register = 1
     for line in optimized:
         if cycle in [20, 60, 100, 140, 180, 220]:
-            print(cycle, x_register)
             results.append(cycle * x_register)
         if line == 'noop':
             cycle += 1
@@ -28,7 +27,6 @@ def part_1():
 
 
 def part_2():
-    results = []
     optimized = []
     for i in lines:
         if i == 'noop':
@@ -45,11 +43,6 @@ def part_2():
         if grid[grid_row][x] == ' ':
             if x_register - 1 <= x <= x_register + 1:
                 grid[grid_row][x] = '#'
-
-        if cycle <= 21:
-            print(cycle, x_register, cycle - 1 % 40, grid[grid_row])
-        if cycle in [20, 60, 100, 140, 180, 220]:
-            results.append(cycle * x_register)
         if line == 'noop':
             cycle += 1
         elif line.startswith('add_to_x'):
@@ -57,8 +50,7 @@ def part_2():
             cycle += 1
             x_register += int(arg)
     print(*[''.join(map(str, i)).replace(' ', '.') for i in grid], sep='\n')
-    return sum(results)
 
 
 print(part_1())
-print(part_2())
+part_2()
