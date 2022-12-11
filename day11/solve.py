@@ -8,7 +8,6 @@ def chunks(list_to_split, chunk_size):
 
 
 def part_1(input_lines: typing.List[str]):
-    result = 0
     inspected_by_monkeys = []
     monkeys_items = []
     for i in input_lines:
@@ -20,7 +19,6 @@ def part_1(input_lines: typing.List[str]):
         items = list(map(int, monkey_data[1].split(':')[1].strip().split(', ')))
         monkeys_items[monkey_id] = items.copy()
     for _ in range(20):
-        # print(f'before {monkeys_items=}')
         for monkey_data in chunks(input_lines, 7):
             monkey_id = int(monkey_data[0].split()[1][:-1])
             items = monkeys_items[monkey_id].copy()
@@ -45,7 +43,6 @@ def part_1(input_lines: typing.List[str]):
                     monkeys_items[if_true].append(worry)
                 else:
                     monkeys_items[if_false].append(worry)
-        # print(f'after {monkeys_items=}')
     result = 1
     inspected_by_monkeys = sorted(inspected_by_monkeys, reverse=True)
     for i in range(2):
@@ -54,8 +51,6 @@ def part_1(input_lines: typing.List[str]):
 
 
 def part_2(input_lines: typing.List[str]):
-    result = 0
-
     inspected_by_monkeys = []
     monkeys_items = []
     monkey_datas = []
@@ -80,16 +75,10 @@ def part_2(input_lines: typing.List[str]):
     common_divider = 1
     all_dividers = [i['divisible_by'] for i in monkey_datas]
     for i in all_dividers:
-        common_divider = common_divider * common_divider * i
+        common_divider = common_divider * i
     for _ in range(10000):
-        if _ % 10 == 0:
-            # print(_)
-            pass
-        # print(f'before {monkeys_items=}')
         for monkey_data in monkey_datas:
             monkey_id = monkey_data['monkey_id']
-            # items = monkey_data['items']
-            # monkey_id = int(monkey_data[0].split()[1][:-1])
             items = monkeys_items[monkey_id]
             inspected_by_monkeys[monkey_id] += len(items)
             operation = monkey_data['operation']
@@ -97,11 +86,6 @@ def part_2(input_lines: typing.List[str]):
             divisible_by = monkey_data['divisible_by']
             if_true = monkey_data['if_true']
             if_false = monkey_data['if_false']
-            # operation = monkey_data[2].split('=')[1].strip().split()[1]
-            # operation_value = monkey_data[2].split('=')[1].strip().split()[2]
-            # divisible_by = int(monkey_data[3].split()[-1])
-            # if_true = int(monkey_data[4].split()[-1])
-            # if_false = int(monkey_data[5].split()[-1])
             for item in items:
                 if operation_value == 'old':
                     second_operator = item
@@ -122,7 +106,6 @@ def part_2(input_lines: typing.List[str]):
     inspected_by_monkeys = sorted(inspected_by_monkeys, reverse=True)
     for i in range(2):
         result *= inspected_by_monkeys[i]
-    print(inspected_by_monkeys)
     return result
 
 
