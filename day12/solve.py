@@ -33,8 +33,6 @@ def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
                     continue
                 if checking_x != x and checking_y != y:
                     continue
-                # print(x, y, checking_x, checking_y)
-
                 if grid[checking_y][checking_x] <= current_value + 1:
                     res.append((checking_x, checking_y))
         return res
@@ -44,12 +42,8 @@ def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
             arr[source] = []
         if dest not in arr[source]:
             arr[source].append(dest)
-        # if dest not in arr:
-        #     arr[dest] = []
-        # if source not in arr[dest]:
-        #     arr[dest].append(source)
 
-    def bfs(grd, arr, source, dest, dots_amount, pred, dist):
+    def bfs(arr, source, dest, dots_amount, pred, dist):
         queue = []
         visited = [False for _ in range(dots_amount)]
         for i in range(dots_amount):
@@ -60,9 +54,8 @@ def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
         queue.append(source)
         while len(queue) != 0:
             u = queue.pop(0)
-            if u not in arr:
+            if u not in arr:  # some dots dont have any connections
                 continue
-            print(u, arr[u])
             for i in range(len(arr[u])):
                 if visited[arr[u][i]] is False:
                     visited[arr[u][i]] = True
@@ -73,26 +66,11 @@ def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
                         return True
         return False
 
-    def get_shortest_path_length(grd, arr, source, dest, dots_amount):
+    def get_shortest_path_length(arr, source, dest, dots_amount):
         pred = [0 for _ in range(dots_amount)]
         dist = [0 for _ in range(dots_amount)]
-        if bfs(grd, arr, source, dest, dots_amount, pred, dist) is False:
+        if bfs(arr, source, dest, dots_amount, pred, dist) is False:
             print('path not found')
-        path = []
-        crawl = dest
-        path.append(crawl)
-
-        while pred[crawl] != -1:
-            path.append(pred[crawl])
-            crawl = pred[crawl]
-        print('shortest path:', dist[dest])
-        print("\nPath is : : ")
-
-        for i in range(len(path) - 1, -1, -1):
-            print(graph_short[path[i]], end=' ')
-        print()
-        for i in range(len(path) - 1, -1, -1):
-            print(grid[graph_short[path[i]][1]][graph_short[path[i]][0]], end=' ')
         return dist[dest]
 
     current = (0, 0)
@@ -120,15 +98,10 @@ def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
             for i in get_all_connections(grid, a, b):
                 add_connection(connections, counter, coords_to_short[str(i)])
             counter += 1
-    ax = {}
-    for b, _ in enumerate(input_lines):
-        for a, _ in enumerate(input_lines[b]):
-            for i in get_all_connections(grid, a, b):
-                add_connection(ax, str((a, b)), i)
 
     dot_amount = len(grid) * len(grid[0])
     result = get_shortest_path_length(
-        grid, connections, coords_to_short[str(current)], coords_to_short[str(target)], dot_amount
+        connections, coords_to_short[str(current)], coords_to_short[str(target)], dot_amount
     )
 
     return result
@@ -161,8 +134,6 @@ def part_2(input_lines: typing.List[str]) -> typing.Union[int, str]:
                     continue
                 if checking_x != x and checking_y != y:
                     continue
-                # print(x, y, checking_x, checking_y)
-
                 if grid[checking_y][checking_x] <= current_value + 1:
                     res.append((checking_x, checking_y))
         return res
@@ -172,12 +143,8 @@ def part_2(input_lines: typing.List[str]) -> typing.Union[int, str]:
             arr[source] = []
         if dest not in arr[source]:
             arr[source].append(dest)
-        # if dest not in arr:
-        #     arr[dest] = []
-        # if source not in arr[dest]:
-        #     arr[dest].append(source)
 
-    def bfs(grd, arr, source, dest, dots_amount, pred, dist):
+    def bfs(arr, source, dest, dots_amount, pred, dist):
         queue = []
         visited = [False for _ in range(dots_amount)]
         for i in range(dots_amount):
@@ -188,9 +155,8 @@ def part_2(input_lines: typing.List[str]) -> typing.Union[int, str]:
         queue.append(source)
         while len(queue) != 0:
             u = queue.pop(0)
-            if u not in arr:
+            if u not in arr:  # some dots dont have any connections
                 continue
-            # print(u, arr[u])
             for i in range(len(arr[u])):
                 if visited[arr[u][i]] is False:
                     visited[arr[u][i]] = True
@@ -201,27 +167,11 @@ def part_2(input_lines: typing.List[str]) -> typing.Union[int, str]:
                         return True
         return False
 
-    def get_shortest_path_length(grd, arr, source, dest, dots_amount):
+    def get_shortest_path_length(arr, source, dest, dots_amount):
         pred = [0 for _ in range(dots_amount)]
         dist = [0 for _ in range(dots_amount)]
-        if bfs(grd, arr, source, dest, dots_amount, pred, dist) is False:
-            # print('path not found')
+        if bfs(arr, source, dest, dots_amount, pred, dist) is False:
             pass
-        path = []
-        crawl = dest
-        path.append(crawl)
-
-        while pred[crawl] != -1:
-            path.append(pred[crawl])
-            crawl = pred[crawl]
-        # print('shortest path:', dist[dest])
-        # print("\nPath is : : ")
-
-        # for i in range(len(path) - 1, -1, -1):
-        #     print(graph_short[path[i]], end=' ')
-        # print()
-        # for i in range(len(path) - 1, -1, -1):
-        #     print(grid[graph_short[path[i]][1]][graph_short[path[i]][0]], end=' ')
         return dist[dest]
 
     current = (0, 0)
@@ -249,14 +199,8 @@ def part_2(input_lines: typing.List[str]) -> typing.Union[int, str]:
             for i in get_all_connections(grid, a, b):
                 add_connection(connections, counter, coords_to_short[str(i)])
             counter += 1
-    ax = {}
-    for b, _ in enumerate(input_lines):
-        for a, _ in enumerate(input_lines[b]):
-            for i in get_all_connections(grid, a, b):
-                add_connection(ax, str((a, b)), i)
 
     dot_amount = len(grid) * len(grid[0])
-    result = 0
     results = {}
     for y, _ in enumerate(grid):
         for x, _ in enumerate(grid[y]):
@@ -264,9 +208,8 @@ def part_2(input_lines: typing.List[str]) -> typing.Union[int, str]:
                 results[(x, y)] = -1
     for i in results:
         results[i] = get_shortest_path_length(
-            grid, connections, coords_to_short[str(i)], coords_to_short[str(target)], dot_amount
+            connections, coords_to_short[str(i)], coords_to_short[str(target)], dot_amount
         )
-    print(results.values())
     return min(results.values())
 
 
