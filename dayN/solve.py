@@ -1,4 +1,5 @@
 import typing
+import utils
 
 
 def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
@@ -11,7 +12,6 @@ def part_2(input_lines: typing.List[str]) -> typing.Union[int, str]:
     return result
 
 
-# noinspection PyBroadException
 def read_file_lines(file_to_read: str, strip: bool = True) -> typing.List[str]:
     try:
         with open(file_to_read) as f:

@@ -2,11 +2,7 @@ import functools
 import json
 import typing
 
-
-def chunks(list_to_split, chunk_size):
-    """Yield successive n-sized chunks from lst."""
-    for i in range(0, len(list_to_split), chunk_size):
-        yield list_to_split[i:i + chunk_size]
+import utils
 
 
 def compare(first, second):
@@ -38,7 +34,7 @@ def compare(first, second):
 
 def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
     result = 0
-    for pair_ind, pair in enumerate(chunks(input_lines, 3)):
+    for pair_ind, pair in enumerate(utils.chunks(input_lines, 3)):
         first, second, _ = pair
         first = json.loads(first)
         second = json.loads(second)
@@ -49,7 +45,7 @@ def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
 
 def part_2(input_lines: typing.List[str]) -> typing.Union[int, str]:
     data = [[2], [6]]
-    for pair_ind, pair in enumerate(chunks(input_lines, 3)):
+    for pair_ind, pair in enumerate(utils.chunks(input_lines, 3)):
         first, second, _ = pair
         first = json.loads(first)
         second = json.loads(second)
