@@ -2,3 +2,4 @@ input.txt
 sample.txt
 venv
 .idea
+__pycache__
