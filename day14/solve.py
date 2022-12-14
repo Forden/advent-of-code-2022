@@ -49,12 +49,10 @@ def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
                 print(f'weird {pair}')
     sand_pos = (500, 0)
     grid[0][500 - offset_x - 1] = '+'
-    # print(*[''.join(map(str, i)) for i in grid], sep='\n')
     resting_count = 0
     while sand_pos != (-1, -1):
         if sand_pos[1] >= max_y:
             break
-        # print(sand_pos)
         if grid[sand_pos[1] + 1][sand_pos[0] - offset_x - 1] == '.':
             grid[sand_pos[1] + 1][sand_pos[0] - offset_x - 1] = '+'
             grid[sand_pos[1]][sand_pos[0] - offset_x - 1] = '.'
@@ -75,9 +73,6 @@ def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
         if (sand_pos == (-1, -1)) and (resting_count <= 10000):
             grid[0][500 - offset_x - 1] = '+'
             sand_pos = (500, 0)
-        # print()
-        # print(*[''.join(map(str, i)) for i in grid], sep='\n')
-    # print(*[''.join(map(str, i)) for i in grid], sep='\n')
     return resting_count
 
 
@@ -129,21 +124,11 @@ def part_2(input_lines: typing.List[str]) -> typing.Union[int, str]:
             else:
                 print(f'weird {pair}')
     sand_pos = (500, 0)
-    # print(f'before, {sand_pos}')
     grid[0][500 - offset_x - 1] = '+'
-    # print(*[''.join(map(str, i)) for i in grid], sep='\n')
     resting_count = 0
     while sand_pos != (-1, -1):
-        # time.sleep(.05)
-        # for y, _ in enumerate(grid):
-        #     for x, _ in enumerate(grid[y]):
-        #         if grid[y][x] == '+':
-        #             sand_pos = (x + offset_x + 1, y)
         if sand_pos[1] >= max_y:
             break
-        # print(
-        #     f'before, {sand_pos=}, [{sand_pos[1] + 1=}, {sand_pos[0] - offset_x - 1=}] [{grid[sand_pos[1] + 1][sand_pos[0] - offset_x - 1]=}]'
-        # )
         if grid[sand_pos[1] + 1][sand_pos[0] - offset_x - 1] == '.':
             grid[sand_pos[1] + 1][sand_pos[0] - offset_x - 1] = '+'
             grid[sand_pos[1]][sand_pos[0] - offset_x - 1] = '.'
@@ -163,7 +148,6 @@ def part_2(input_lines: typing.List[str]) -> typing.Union[int, str]:
                 sand_pos = (-1, -1)
         else:
             print(f'weird {sand_pos}')
-        # print(f'after, {sand_pos}')
         if (
                 sand_pos == (-1, -1)
         ) and (
@@ -173,13 +157,6 @@ def part_2(input_lines: typing.List[str]) -> typing.Union[int, str]:
         ):
             grid[0][500 - offset_x - 1] = '+'
             sand_pos = (500, 0)
-            # if resting_count % 250 == 0:
-            #     print()
-            #     print(*[''.join(map(str, i)) for i in grid], sep='\n')
-        # print()
-        # print(*[''.join(map(str, i)) for i in grid], sep='\n')
-    # print()
-    # print(*[''.join(map(str, i)) for i in grid], sep='\n')
     return resting_count
 
 
