@@ -4,7 +4,6 @@ import utils
 
 
 def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
-    result = 0
     min_x, max_x, max_y = 100000, 0, 0
     for path in input_lines:
         for pair in utils.sliding_window(
@@ -21,7 +20,6 @@ def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
                     max_x = x
                 if y > max_y:
                     max_y = y
-    print(min_x, max_x, max_y)
     min_x -= 1
     offset_x = min_x
     grid = [['.' for _ in range(max_x - offset_x)] for _ in range(max_y + 1)]
@@ -49,40 +47,41 @@ def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
                     grid[pair[0][1]][i - offset_x - 1] = '#'
             else:
                 print(f'weird {pair}')
-    sand_pos = (500 - offset_x - 1, 0)
+    sand_pos = (500, 0)
     grid[0][500 - offset_x - 1] = '+'
-    print(*[''.join(map(str, i)) for i in grid], sep='\n')
-    while '+' in ''.join(''.join(i) for i in grid):
-        for y, _ in enumerate(grid):
-            for x, _ in enumerate(grid[y]):
-                if grid[y][x] == '+':
-                    sand_pos = (x + offset_x + 1, y)
+    # print(*[''.join(map(str, i)) for i in grid], sep='\n')
+    resting_count = 0
+    while sand_pos != (-1, -1):
         if sand_pos[1] >= max_y:
             break
         # print(sand_pos)
         if grid[sand_pos[1] + 1][sand_pos[0] - offset_x - 1] == '.':
             grid[sand_pos[1] + 1][sand_pos[0] - offset_x - 1] = '+'
             grid[sand_pos[1]][sand_pos[0] - offset_x - 1] = '.'
+            sand_pos = (sand_pos[0], sand_pos[1] + 1)
         elif grid[sand_pos[1] + 1][sand_pos[0] - offset_x - 1] in ['o', '#']:
             if grid[sand_pos[1] + 1][sand_pos[0] - offset_x - 2] == '.':
                 grid[sand_pos[1] + 1][sand_pos[0] - offset_x - 2] = '+'
                 grid[sand_pos[1]][sand_pos[0] - offset_x - 1] = '.'
+                sand_pos = (sand_pos[0] - 1, sand_pos[1] + 1)
             elif grid[sand_pos[1] + 1][sand_pos[0] - offset_x] == '.':
                 grid[sand_pos[1] + 1][sand_pos[0] - offset_x] = '+'
                 grid[sand_pos[1]][sand_pos[0] - offset_x - 1] = '.'
+                sand_pos = (sand_pos[0] + 1, sand_pos[1] + 1)
             else:
                 grid[sand_pos[1]][sand_pos[0] - offset_x - 1] = 'o'
-        if ('+' not in ''.join(''.join(i) for i in grid)) and (''.join(''.join(i) for i in grid).count('o') <= 10000):
+                resting_count += 1
+                sand_pos = (-1, -1)
+        if (sand_pos == (-1, -1)) and (resting_count <= 10000):
             grid[0][500 - offset_x - 1] = '+'
+            sand_pos = (500, 0)
         # print()
         # print(*[''.join(map(str, i)) for i in grid], sep='\n')
     # print(*[''.join(map(str, i)) for i in grid], sep='\n')
-    result = ''.join(''.join(i) for i in grid).count('o')
-    return result
+    return resting_count
 
 
 def part_2(input_lines: typing.List[str]) -> typing.Union[int, str]:
-    result = 0
     min_x, max_x, max_y = 100000, 0, 0
     for path in input_lines:
         for pair in utils.sliding_window(
@@ -100,9 +99,8 @@ def part_2(input_lines: typing.List[str]) -> typing.Union[int, str]:
                 if y > max_y:
                     max_y = y
     max_y += 3
-    print(min_x, max_x, max_y)
-    min_x -= 101
-    max_x += 100
+    min_x -= 301
+    max_x += 300
     offset_x = min_x
     grid = [['.' for _ in range(max_x - offset_x)] for _ in range(max_y - 1)]
     grid.append(['#' for _ in range(max_x - offset_x)])
@@ -130,43 +128,59 @@ def part_2(input_lines: typing.List[str]) -> typing.Union[int, str]:
                     grid[pair[0][1]][i - offset_x - 1] = '#'
             else:
                 print(f'weird {pair}')
-    sand_pos = (500 - offset_x - 1, 0)
+    sand_pos = (500, 0)
+    # print(f'before, {sand_pos}')
     grid[0][500 - offset_x - 1] = '+'
-    print(*[''.join(map(str, i)) for i in grid], sep='\n')
-    while '+' in ''.join(''.join(i) for i in grid):
-        for y, _ in enumerate(grid):
-            for x, _ in enumerate(grid[y]):
-                if grid[y][x] == '+':
-                    sand_pos = (x + offset_x + 1, y)
+    # print(*[''.join(map(str, i)) for i in grid], sep='\n')
+    resting_count = 0
+    while sand_pos != (-1, -1):
+        # time.sleep(.05)
+        # for y, _ in enumerate(grid):
+        #     for x, _ in enumerate(grid[y]):
+        #         if grid[y][x] == '+':
+        #             sand_pos = (x + offset_x + 1, y)
         if sand_pos[1] >= max_y:
             break
-        # print(sand_pos)
+        # print(
+        #     f'before, {sand_pos=}, [{sand_pos[1] + 1=}, {sand_pos[0] - offset_x - 1=}] [{grid[sand_pos[1] + 1][sand_pos[0] - offset_x - 1]=}]'
+        # )
         if grid[sand_pos[1] + 1][sand_pos[0] - offset_x - 1] == '.':
             grid[sand_pos[1] + 1][sand_pos[0] - offset_x - 1] = '+'
             grid[sand_pos[1]][sand_pos[0] - offset_x - 1] = '.'
+            sand_pos = (sand_pos[0], sand_pos[1] + 1)
         elif grid[sand_pos[1] + 1][sand_pos[0] - offset_x - 1] in ['o', '#']:
-            # print(grid[sand_pos[1] + 1], sand_pos[0] - offset_x)
             if grid[sand_pos[1] + 1][sand_pos[0] - offset_x - 2] == '.':
                 grid[sand_pos[1] + 1][sand_pos[0] - offset_x - 2] = '+'
                 grid[sand_pos[1]][sand_pos[0] - offset_x - 1] = '.'
+                sand_pos = (sand_pos[0] - 1, sand_pos[1] + 1)
             elif grid[sand_pos[1] + 1][sand_pos[0] - offset_x] == '.':
                 grid[sand_pos[1] + 1][sand_pos[0] - offset_x] = '+'
                 grid[sand_pos[1]][sand_pos[0] - offset_x - 1] = '.'
+                sand_pos = (sand_pos[0] + 1, sand_pos[1] + 1)
             else:
                 grid[sand_pos[1]][sand_pos[0] - offset_x - 1] = 'o'
+                resting_count += 1
+                sand_pos = (-1, -1)
+        else:
+            print(f'weird {sand_pos}')
+        # print(f'after, {sand_pos}')
         if (
-                '+' not in ''.join(''.join(i) for i in grid)
+                sand_pos == (-1, -1)
         ) and (
-                ''.join(''.join(i) for i in grid).count('o') <= 1000000
+                resting_count <= 1000000
         ) and (
                 grid[0][500 - offset_x - 1] != 'o'
         ):
             grid[0][500 - offset_x - 1] = '+'
-        print()
-        print(*[''.join(map(str, i)) for i in grid], sep='\n')
+            sand_pos = (500, 0)
+            # if resting_count % 250 == 0:
+            #     print()
+            #     print(*[''.join(map(str, i)) for i in grid], sep='\n')
+        # print()
+        # print(*[''.join(map(str, i)) for i in grid], sep='\n')
+    # print()
     # print(*[''.join(map(str, i)) for i in grid], sep='\n')
-    result = ''.join(''.join(i) for i in grid).count('o')
-    return result
+    return resting_count
 
 
 # noinspection PyBroadException
