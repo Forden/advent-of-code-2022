@@ -1,6 +1,8 @@
 import string
 import typing
 
+import utils
+
 
 def get_dot_height(value: str):
     return string.ascii_letters.index(value) + 1
@@ -43,33 +45,9 @@ def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
         if dest not in arr[source]:
             arr[source].append(dest)
 
-    def bfs(arr, source, dest, dots_amount, pred, dist):
-        queue = []
-        visited = [False for _ in range(dots_amount)]
-        for i in range(dots_amount):
-            dist[i] = 1000000
-            pred[i] = -1
-        visited[source] = True
-        dist[source] = 0
-        queue.append(source)
-        while len(queue) != 0:
-            u = queue.pop(0)
-            if u not in arr:  # some dots dont have any connections
-                continue
-            for i in range(len(arr[u])):
-                if visited[arr[u][i]] is False:
-                    visited[arr[u][i]] = True
-                    dist[arr[u][i]] = dist[u] + 1
-                    pred[arr[u][i]] = u
-                    queue.append(arr[u][i])
-                    if arr[u][i] == dest:
-                        return True
-        return False
-
-    def get_shortest_path_length(arr, source, dest, dots_amount):
-        pred = [0 for _ in range(dots_amount)]
-        dist = [0 for _ in range(dots_amount)]
-        if bfs(arr, source, dest, dots_amount, pred, dist) is False:
+    def get_shortest_path_length(arr, source, dest):
+        _, dist, path_exists = utils.bfs(connections_list=arr, start=source, target=dest)
+        if not path_exists:
             print('path not found')
         return dist[dest]
 
@@ -99,9 +77,8 @@ def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
                 add_connection(connections, counter, coords_to_short[str(i)])
             counter += 1
 
-    dot_amount = len(grid) * len(grid[0])
     result = get_shortest_path_length(
-        connections, coords_to_short[str(current)], coords_to_short[str(target)], dot_amount
+        connections, coords_to_short[str(current)], coords_to_short[str(target)]
     )
 
     return result
@@ -144,34 +121,10 @@ def part_2(input_lines: typing.List[str]) -> typing.Union[int, str]:
         if dest not in arr[source]:
             arr[source].append(dest)
 
-    def bfs(arr, source, dest, dots_amount, pred, dist):
-        queue = []
-        visited = [False for _ in range(dots_amount)]
-        for i in range(dots_amount):
-            dist[i] = 1000000
-            pred[i] = -1
-        visited[source] = True
-        dist[source] = 0
-        queue.append(source)
-        while len(queue) != 0:
-            u = queue.pop(0)
-            if u not in arr:  # some dots dont have any connections
-                continue
-            for i in range(len(arr[u])):
-                if visited[arr[u][i]] is False:
-                    visited[arr[u][i]] = True
-                    dist[arr[u][i]] = dist[u] + 1
-                    pred[arr[u][i]] = u
-                    queue.append(arr[u][i])
-                    if arr[u][i] == dest:
-                        return True
-        return False
-
-    def get_shortest_path_length(arr, source, dest, dots_amount):
-        pred = [0 for _ in range(dots_amount)]
-        dist = [0 for _ in range(dots_amount)]
-        if bfs(arr, source, dest, dots_amount, pred, dist) is False:
-            pass
+    def get_shortest_path_length(arr, source, dest):
+        _, dist, path_exists = utils.bfs(connections_list=arr, start=source, target=dest)
+        if not path_exists:
+            return -1
         return dist[dest]
 
     current = (0, 0)
@@ -200,7 +153,6 @@ def part_2(input_lines: typing.List[str]) -> typing.Union[int, str]:
                 add_connection(connections, counter, coords_to_short[str(i)])
             counter += 1
 
-    dot_amount = len(grid) * len(grid[0])
     results = {}
     for y, _ in enumerate(grid):
         for x, _ in enumerate(grid[y]):
@@ -208,9 +160,9 @@ def part_2(input_lines: typing.List[str]) -> typing.Union[int, str]:
                 results[(x, y)] = -1
     for i in results:
         results[i] = get_shortest_path_length(
-            connections, coords_to_short[str(i)], coords_to_short[str(target)], dot_amount
+            connections, coords_to_short[str(i)], coords_to_short[str(target)]
         )
-    return min(results.values())
+    return min(filter(lambda x: x > 0, results.values()))
 
 
 # noinspection PyBroadException
