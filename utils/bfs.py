@@ -37,19 +37,3 @@ def construct_path_from_bfs(paths: typing.Dict[int, T], start: T, target: T) -> 
         cur_vertex = paths[cur_vertex]
     res_path = list(reversed(res_path))
     return res_path
-
-
-if __name__ == '__main__':
-    graph = {
-        '5': ['3', '7'],
-        '3': ['2', '4'],
-        '7': ['8'],
-        '2': [],
-        '4': ['8'],
-        '8': []
-    }
-    # pred = {}
-    # dist = {}
-    pred, dist, x = bfs(graph, '5', '4')
-    print(construct_path_from_bfs(pred, '5', '4'))
-    print(x, pred, dist['4'], sep='\n')
