@@ -103,7 +103,7 @@ def part_2(input_lines: typing.List[str]) -> typing.Union[int, str]:
                 return occupied, y
         return None
 
-    with Pool(11) as p:
+    with Pool() as p:
         results = list(filter(lambda res: res is not None, p.map(check_xs_for_y, range(4000001))))
     ranges, y = list(filter(lambda a: a is not None, results))[0]
     return (ranges[0][1] + 1) * 4000000 + y
