@@ -1,42 +1,21 @@
 import typing
 from multiprocessing import Pool
 
+import utils
+
 
 def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
-    def get_manh_distance(start, end):
-        diff_x, diff_y = abs(start[0] - end[0]), abs(start[1] - end[1])
-        return diff_x + diff_y
+    global check_x
 
-    sensors_locations = set()
-    beacons_locations = set()
-    closest_beacon_to_sensor = {}
-    for i in input_lines:
-        _, _, x, y, _, _, _, _, x_clo, y_clo = i.split()
-        x = int(x.split('=')[1][:-1])
-        y = int(y.split('=')[1][:-1])
-        x_clo = int(x_clo.split('=')[1][:-1])
-        y_clo = int(y_clo.split('=')[1])
-        sensors_locations.add((x, y))
-        beacons_locations.add((x_clo, y_clo))
-        closest_beacon_to_sensor[(x, y)] = (x_clo, y_clo)
-    result = 0
-    marked = set()
-    for sensor, closest_beacon in closest_beacon_to_sensor.items():
-        to_beacon = get_manh_distance(sensor, closest_beacon)
-        for i in range(-10_000_000, 10_000_000):
-            if (i, 2000000) in marked:
+    def check_x(x: int) -> typing.Optional[int]:
+        marked = set()
+        for sensor, distance_to_beacon in closest_beacon_to_sensor_distances.items():
+            if x in marked:
                 continue
-            dist = get_manh_distance(sensor, (i, 2000000))
-            if dist <= to_beacon:
-                marked.add((i, 2000000))
-                result += 1
-    return len(marked.difference(beacons_locations))
-
-
-def part_2(input_lines: typing.List[str]) -> typing.Union[int, str]:
-    def get_manh_distance(start, end):
-        diff_x, diff_y = abs(start[0] - end[0]), abs(start[1] - end[1])
-        return diff_x + diff_y
+            dist = utils.get_manhattan_distance(sensor, (x, 2000000))
+            if dist <= distance_to_beacon:
+                marked.add(x)
+        return x if x in marked else None
 
     sensors_locations = set()
     beacons_locations = set()
@@ -51,13 +30,33 @@ def part_2(input_lines: typing.List[str]) -> typing.Union[int, str]:
         sensors_locations.add((x, y))
         beacons_locations.add((x_clo, y_clo))
         closest_beacon_to_sensor[(x, y)] = (x_clo, y_clo)
-        closest_beacon_to_sensor_distances[(x, y)] = get_manh_distance((x, y), (x_clo, y_clo))
+        closest_beacon_to_sensor_distances[(x, y)] = utils.get_manhattan_distance((x, y), (x_clo, y_clo))
+    with Pool(11) as p:
+        results = list(filter(lambda res: res is not None, p.map(check_x, range(-10_000_000, 10_000_000))))
+    return len({(x, 2000000) for x in results}.difference(beacons_locations))
+
+
+def part_2(input_lines: typing.List[str]) -> typing.Union[int, str]:
+    sensors_locations = set()
+    beacons_locations = set()
+    closest_beacon_to_sensor = {}
+    closest_beacon_to_sensor_distances = {}
+    for i in input_lines:
+        _, _, x, y, _, _, _, _, x_clo, y_clo = i.split()
+        x = int(x.split('=')[1][:-1])
+        y = int(y.split('=')[1][:-1])
+        x_clo = int(x_clo.split('=')[1][:-1])
+        y_clo = int(y_clo.split('=')[1])
+        sensors_locations.add((x, y))
+        beacons_locations.add((x_clo, y_clo))
+        closest_beacon_to_sensor[(x, y)] = (x_clo, y_clo)
+        closest_beacon_to_sensor_distances[(x, y)] = utils.get_manhattan_distance((x, y), (x_clo, y_clo))
     global check_xs_for_y
 
     def check_xs_for_y(y: int):
         ranges = []
         for sensor, distance_to_beacon in closest_beacon_to_sensor_distances.items():
-            height_diff = get_manh_distance(sensor, (sensor[0], y))
+            height_diff = utils.get_manhattan_distance(sensor, (sensor[0], y))
             if height_diff > distance_to_beacon:
                 continue
             min_x = sensor[0] - (distance_to_beacon - height_diff)
