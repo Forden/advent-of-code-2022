@@ -31,9 +31,24 @@ def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
         beacons_locations.add((x_clo, y_clo))
         closest_beacon_to_sensor[(x, y)] = (x_clo, y_clo)
         closest_beacon_to_sensor_distances[(x, y)] = utils.get_manhattan_distance((x, y), (x_clo, y_clo))
-    with Pool(11) as p:
-        results = list(filter(lambda res: res is not None, p.map(check_x, range(-10_000_000, 10_000_000))))
-    return len({(x, 2000000) for x in results}.difference(beacons_locations))
+    ranges = []
+    for sensor, distance_to_beacon in closest_beacon_to_sensor_distances.items():
+        height_diff = utils.get_manhattan_distance(sensor, (sensor[0], 2000000))
+        if height_diff > distance_to_beacon:
+            continue
+        min_x = sensor[0] - (distance_to_beacon - height_diff)
+        max_x = sensor[0] + (distance_to_beacon - height_diff)
+        ranges.append((min_x, max_x))
+    if ranges:
+        occupied = []
+        for begin, end in sorted(ranges):
+            if occupied and occupied[-1][1] >= begin - 1:
+                occupied[-1] = (occupied[-1][0], max(end, occupied[-1][1]))
+            else:
+                occupied.append((begin, end))
+        occupied_amount = sum(end - start for start, end in occupied)
+        return occupied_amount
+    return 0
 
 
 def part_2(input_lines: typing.List[str]) -> typing.Union[int, str]:
