@@ -74,7 +74,6 @@ def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
         print('before spawning new figure')
         print_grid(grid)
         bottom_edge = 4 if grid == {} else max(filter(lambda x: '#' in grid[x], grid.keys())) + 4
-        print(list(grid.keys()), list(filter(lambda x: '#' in grid[x], grid.keys())), bottom_edge)
         if current_figure == '-':
             start_coord = (figure_left_edge, bottom_edge)
         elif current_figure == '+':
@@ -84,7 +83,7 @@ def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
         elif current_figure == '|':
             start_coord = (figure_left_edge, bottom_edge + 3)
         elif current_figure == '[]':
-            start_coord = (figure_left_edge, bottom_edge+1)
+            start_coord = (figure_left_edge, bottom_edge + 1)
         else:
             continue
         figure_coords = get_figure_coords(current_figure, start_coord)
@@ -92,219 +91,62 @@ def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
             if y not in grid:
                 grid[y] = ['.' for _ in range(7)]
             grid[y][x] = '@'
-        print(f'spawned figure [{current_figure=}]')
+        print(f'spawned figure [{current_figure=}] №{figure_ind}')
         print_grid(grid)
         figure_stopped = False
         while figure_stopped is False:
             cmd = commands[cmd_ind].split()[0]
             print(f'{cmd=} {cmd_ind=}, {current_figure=}')
-            if current_figure == '-':
-                if cmd == '>':
-                    possible_move = True
-                    figure_coords_one_step_right = get_figure_coords(
-                        current_figure, (start_coord[0] + 1, start_coord[1])
-                    )
-                    for x, y in figure_coords_one_step_right:
-                        if x == grid_width:
-                            print(f'move impossible because right limit at {(x, y)=}')
-                            possible_move = False
-                            break
-                        elif grid[y][x] == '#':
-                            print(f'move impossible because figure right at {(x, y)=}')
-                            possible_move = False
-                    if possible_move:
-                        print(f'move possible, executing')
-                        start_coord = (start_coord[0] + 1, start_coord[1])
-                        for x, y in figure_coords:
-                            grid[y][x] = '.'
-                        figure_coords = get_figure_coords(current_figure, start_coord)
-                elif cmd == '<':
-                    possible_move = True
-                    figure_coords_one_step_right = get_figure_coords(
-                        current_figure, (start_coord[0] - 1, start_coord[1])
-                    )
-                    for x, y in figure_coords_one_step_right:
-                        if x == -1:
-                            print(f'move impossible because left limit at {(x, y)=}')
-                            possible_move = False
-                            break
-                        elif grid[y][x] == '#':
-                            print(f'move impossible because figure right at {(x, y)=}')
-                            possible_move = False
-                    if possible_move:
-                        print(f'move possible, executing')
-                        start_coord = (start_coord[0] - 1, start_coord[1])
-                        for x, y in figure_coords:
-                            grid[y][x] = '.'
-                        figure_coords = get_figure_coords(current_figure, start_coord)
-            elif current_figure == '+':
-                if cmd == '>':
-                    possible_move = True
-                    figure_coords_one_step_right = get_figure_coords(
-                        current_figure, (start_coord[0] + 1, start_coord[1])
-                    )
-                    for x, y in figure_coords_one_step_right:
-                        if x == grid_width:
-                            print(f'move impossible because right limit at {(x, y)=}')
-                            possible_move = False
-                            break
-                        elif grid[y][x] == '#':
-                            print(f'move impossible because figure right at {(x, y)=}')
-                            possible_move = False
-                    if possible_move:
-                        print(f'move possible, executing')
-                        start_coord = (start_coord[0] + 1, start_coord[1])
-                        for x, y in figure_coords:
-                            grid[y][x] = '.'
-                        figure_coords = get_figure_coords(current_figure, start_coord)
-                elif cmd == '<':
-                    possible_move = True
-                    figure_coords_one_step_right = get_figure_coords(
-                        current_figure, (start_coord[0] - 1, start_coord[1])
-                    )
-                    for x, y in figure_coords_one_step_right:
-                        if x == -1:
-                            print(f'move impossible because left limit at {(x, y)=}')
-                            possible_move = False
-                            break
-                        elif grid[y][x] == '#':
-                            print(f'move impossible because figure right at {(x, y)=}')
-                            possible_move = False
-                    if possible_move:
-                        print(f'move possible, executing')
-                        start_coord = (start_coord[0] - 1, start_coord[1])
-                        for x, y in figure_coords:
-                            grid[y][x] = '.'
-                        figure_coords = get_figure_coords(current_figure, start_coord)
-            elif current_figure == 'L':
-                if cmd == '>':
-                    possible_move = True
-                    figure_coords_one_step_right = get_figure_coords(
-                        current_figure, (start_coord[0] + 1, start_coord[1])
-                    )
-                    for x, y in figure_coords_one_step_right:
-                        if x == grid_width:
-                            print(f'move impossible because right limit at {(x, y)=}')
-                            possible_move = False
-                            break
-                        elif grid[y][x] == '#':
-                            print(f'move impossible because figure right at {(x, y)=}')
-                            possible_move = False
-                    if possible_move:
-                        print(f'move possible, executing')
-                        start_coord = (start_coord[0] + 1, start_coord[1])
-                        for x, y in figure_coords:
-                            grid[y][x] = '.'
-                        figure_coords = get_figure_coords(current_figure, start_coord)
-                elif cmd == '<':
-                    possible_move = True
-                    figure_coords_one_step_right = get_figure_coords(
-                        current_figure, (start_coord[0] - 1, start_coord[1])
-                    )
-                    for x, y in figure_coords_one_step_right:
-                        if x == -1:
-                            print(f'move impossible because left limit at {(x, y)=}')
-                            possible_move = False
-                            break
-                        elif grid[y][x] == '#':
-                            print(f'move impossible because figure right at {(x, y)=}')
-                            possible_move = False
-                    if possible_move:
-                        print(f'move possible, executing')
-                        start_coord = (start_coord[0] - 1, start_coord[1])
-                        for x, y in figure_coords:
-                            grid[y][x] = '.'
-                        figure_coords = get_figure_coords(current_figure, start_coord)
-            elif current_figure == '|':
-                if cmd == '>':
-                    possible_move = True
-                    figure_coords_one_step_right = get_figure_coords(
-                        current_figure, (start_coord[0] + 1, start_coord[1])
-                    )
-                    for x, y in figure_coords_one_step_right:
-                        if x == grid_width:
-                            print(f'move impossible because right limit at {(x, y)=}')
-                            possible_move = False
-                            break
-                        elif grid[y][x] == '#':
-                            print(f'move impossible because figure right at {(x, y)=}')
-                            possible_move = False
-                    if possible_move:
-                        print(f'move possible, executing')
-                        start_coord = (start_coord[0] + 1, start_coord[1])
-                        for x, y in figure_coords:
-                            grid[y][x] = '.'
-                        figure_coords = get_figure_coords(current_figure, start_coord)
-                elif cmd == '<':
-                    possible_move = True
-                    figure_coords_one_step_right = get_figure_coords(
-                        current_figure, (start_coord[0] - 1, start_coord[1])
-                    )
-                    for x, y in figure_coords_one_step_right:
-                        if x == -1:
-                            print(f'move impossible because left limit at {(x, y)=}')
-                            possible_move = False
-                            break
-                        elif grid[y][x] == '#':
-                            print(f'move impossible because figure right at {(x, y)=}')
-                            possible_move = False
-                    if possible_move:
-                        print(f'move possible, executing')
-                        start_coord = (start_coord[0] - 1, start_coord[1])
-                        for x, y in figure_coords:
-                            grid[y][x] = '.'
-                        figure_coords = get_figure_coords(current_figure, start_coord)
-            elif current_figure == '[]':
-                if cmd == '>':
-                    possible_move = True
-                    figure_coords_one_step_right = get_figure_coords(
-                        current_figure, (start_coord[0] + 1, start_coord[1])
-                    )
-                    for x, y in figure_coords_one_step_right:
-                        if x == grid_width:
-                            print(f'move impossible because right limit at {(x, y)=}')
-                            possible_move = False
-                            break
-                        elif grid[y][x] == '#':
-                            print(f'move impossible because figure right at {(x, y)=}')
-                            possible_move = False
-                    if possible_move:
-                        print(f'move possible, executing')
-                        start_coord = (start_coord[0] + 1, start_coord[1])
-                        for x, y in figure_coords:
-                            grid[y][x] = '.'
-                        figure_coords = get_figure_coords(current_figure, start_coord)
-                elif cmd == '<':
-                    possible_move = True
-                    figure_coords_one_step_right = get_figure_coords(
-                        current_figure, (start_coord[0] - 1, start_coord[1])
-                    )
-                    for x, y in figure_coords_one_step_right:
-                        if x == -1:
-                            print(f'move impossible because left limit at {(x, y)=}')
-                            possible_move = False
-                            break
-                        elif grid[y][x] == '#':
-                            print(f'move impossible because figure right at {(x, y)=}')
-                            possible_move = False
-                    if possible_move:
-                        print(f'move possible, executing')
-                        start_coord = (start_coord[0] - 1, start_coord[1])
-                        for x, y in figure_coords:
-                            grid[y][x] = '.'
-                        figure_coords = get_figure_coords(current_figure, start_coord)
+            if cmd == '>':
+                possible_move = True
+                figure_coords_one_step_right = get_figure_coords(
+                    current_figure, (start_coord[0] + 1, start_coord[1])
+                )
+                for x, y in figure_coords_one_step_right:
+                    if x == grid_width:
+                        # print(f'move impossible because right limit at {(x, y)=}')
+                        possible_move = False
+                        break
+                    elif grid[y][x] == '#':
+                        # print(f'move impossible because figure right at {(x, y)=}')
+                        possible_move = False
+                if possible_move:
+                    # print(f'move possible, executing')
+                    start_coord = (start_coord[0] + 1, start_coord[1])
+                    for x, y in figure_coords:
+                        grid[y][x] = '.'
+                    figure_coords = get_figure_coords(current_figure, start_coord)
+            elif cmd == '<':
+                possible_move = True
+                figure_coords_one_step_right = get_figure_coords(
+                    current_figure, (start_coord[0] - 1, start_coord[1])
+                )
+                for x, y in figure_coords_one_step_right:
+                    if x == -1:
+                        # print(f'move impossible because left limit at {(x, y)=}')
+                        possible_move = False
+                        break
+                    elif grid[y][x] == '#':
+                        # print(f'move impossible because figure right at {(x, y)=}')
+                        possible_move = False
+                if possible_move:
+                    # print(f'move possible, executing')
+                    start_coord = (start_coord[0] - 1, start_coord[1])
+                    for x, y in figure_coords:
+                        grid[y][x] = '.'
+                    figure_coords = get_figure_coords(current_figure, start_coord)
             for x, y in figure_coords:
                 if y not in grid:
                     grid[y] = ['.' for _ in range(7)]
                 grid[y][x] = '@'
-            print(f'after {cmd} new coords: {figure_coords=}')
-            print_grid(grid)
+            # print(f'after {cmd} new coords: {figure_coords=}')
+            # print_grid(grid)
             figure_coords_step_down = get_figure_coords(current_figure, (start_coord[0], start_coord[1] - 1))
-            print(f'checking coords {figure_coords_step_down=} ')
+            # print(f'checking coords {figure_coords_step_down=} ')
             for x, y in figure_coords_step_down:
                 if y in grid:
                     if grid[y][x] == '#':
-                        print(f'found stopped figure at ({x=}, {y=})')
+                        # print(f'found stopped figure at ({x=}, {y=})')
                         for a, b in figure_coords:
                             if b not in grid:
                                 grid[b] = ['.' for _ in range(7)]
@@ -312,7 +154,7 @@ def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
                         figure_stopped = True
                         break
                 elif y == 0:
-                    print(f'reached y = 0')
+                    # print(f'reached y = 0')
                     for a, b in figure_coords:
                         grid[b][a] = '#'
                     figure_stopped = True
@@ -320,9 +162,9 @@ def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
             if not figure_stopped:
                 for x, y in figure_coords:
                     grid[y][x] = '.'
-                print(
-                    f'figure was not stopped, old start_coord: {start_coord=}, new: {(start_coord[0], start_coord[1] - 1)=}'
-                )
+                # print(
+                #     f'figure was not stopped, old start_coord: {start_coord=}, new: {(start_coord[0], start_coord[1] - 1)=}'
+                # )
                 start_coord = (start_coord[0], start_coord[1] - 1)
                 figure_coords = get_figure_coords(current_figure, start_coord)
                 for x, y in figure_coords:
@@ -330,16 +172,34 @@ def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
                         grid[y] = ['.' for _ in range(7)]
                     grid[y][x] = '@'
 
-            print('after move down')
-            print_grid(grid)
+            # print('after move down')
+            # print_grid(grid)
             cmd_ind += 1
             # time.sleep(.5)
     return max(filter(lambda x: '#' in grid[x], grid.keys()))
 
 
 def part_2(input_lines: typing.List[str]) -> typing.Union[int, str]:
-    result = 0
-    return result
+    mult = [
+        33, 40, 37, 36, 39, 36, 42, 37, 41, 42, 38, 36, 40, 33, 35, 44, 41, 33, 35, 42, 30, 37, 34, 41, 33, 34, 39,
+        41, 39, 35, 36, 39, 36, 29, 40, 32, 43, 38, 32, 44, 32, 39, 42, 30, 45, 32, 42, 36, 40, 35, 35, 32, 34, 32,
+        36, 41, 43, 34, 41, 40, 44, 45, 33, 33, 35, 40, 43, 48, 38, 34, 40, 38, 35, 41, 46, 34, 36, 44, 35, 37, 41,
+        38, 30, 38, 47, 37, 37, 37, 31, 36, 36, 35, 35, 37, 37, 39, 42, 41, 32, 34, 40, 30, 38, 36, 39, 39, 34, 38,
+        36, 38, 39, 32, 43, 36, 40, 43, 31, 38, 34, 34, 36, 34, 30, 37, 43, 40, 40, 44, 36, 45, 39, 29, 39, 39, 37,
+        46, 45, 34, 41, 37, 34, 40, 39, 44, 32, 45, 38, 40, 33, 44, 32, 32, 50, 36, 36, 33, 40, 32, 35, 37, 37, 35,
+        36, 40, 38, 44, 32, 36, 38, 33, 35, 36, 35, 42, 38, 34, 39, 38, 40, 33, 35, 43, 37, 42, 31, 40, 37, 33, 32,
+        34, 32, 36, 42, 44, 32, 43, 39, 46, 42, 31, 38, 34, 38, 45, 51, 33, 38, 39, 36, 40, 36, 47, 32, 39, 41, 41,
+        35, 38, 37, 33, 39, 44, 37, 34, 40, 31, 33, 38, 41, 32, 34, 39, 43, 37, 38, 32, 39, 37, 30, 38, 35, 42, 38,
+        34, 38, 36, 40, 39, 32, 45, 34, 39, 38, 36, 39, 33, 35, 30, 33, 37, 36, 44, 39, 37, 45, 41, 45, 34, 33, 36,
+        39, 39, 49, 42, 34, 38, 38, 36, 40, 43, 39, 32, 47, 35, 38, 38, 41, 31, 33, 51, 36, 38, 33, 35, 36, 31, 39,
+        36, 37, 36, 38, 44, 40, 32, 35, 38, 31, 37, 33, 42, 36, 41, 35, 36, 39, 36, 36, 40, 40, 35, 43, 30, 41, 32,
+        37, 32, 35, 31, 39, 41, 42, 34, 47, 34, 47, 42, 28, 37, 37, 40, 43, 51
+    ]
+    x = 349
+    for ch in utils.chunks(range(225, 1000000000000, 25), len(mult)):
+        for i, a in enumerate(ch):
+            x += mult[i]
+    return x
 
 
 def read_file_lines(file_to_read: str, strip: bool = True) -> typing.List[str]:
@@ -355,7 +215,7 @@ def read_file_lines(file_to_read: str, strip: bool = True) -> typing.List[str]:
 
 if __name__ == '__main__':
     files_to_run = [
-        # 'sample.txt',
+        'sample.txt',
         'input.txt'
     ]
     for filename in files_to_run:
