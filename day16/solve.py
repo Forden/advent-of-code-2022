@@ -82,13 +82,99 @@ def part_2(input_lines: typing.List[str]) -> typing.Union[int, str]:
     for k in sorted(graph.keys()):
         valve_to_num[k] = len(valve_to_num.values()) + 1
         num_to_valve[len(valve_to_num.values())] = k
-    print(f'{valve_to_num=}')
-    print(f'{num_to_valve=}')
-    print(f'{graph=}')
 
     TOTAL_TIME = 26
 
-    return 0
+    states: list[tuple[int, set, int]] = [
+        (
+            valve_to_num['AA'],
+            set(
+                filter(
+                    lambda x: valves_rates[num_to_valve[x]] <= 0,
+                    [valve_to_num[i] for i in valve_to_num]
+                )
+            ),
+            0
+        )
+    ]  # open all zero valves
+    best_orders = {}
+
+    # cursed bfs
+    for t in range(1, TOTAL_TIME + 1):
+        new_states = []
+        for current_location, opened, total_pressure_released in states:
+            key = (current_location, ','.join(map(str, opened)))
+            if key in best_orders:
+                if total_pressure_released <= best_orders[key]:
+                    continue
+                else:
+                    pass
+
+            best_orders[key] = total_pressure_released
+
+            flow_rate = valves_rates[num_to_valve[current_location]]
+            children = graph[num_to_valve[current_location]]
+            if current_location in opened:
+                pass
+            elif flow_rate <= 0:
+                pass
+            else:
+                new_states.append(
+                    (
+                        current_location,
+                        opened.union({current_location}),
+                        total_pressure_released + flow_rate * (TOTAL_TIME - t)
+                    )
+                )
+            for dest in children:
+                new_states.append((valve_to_num[dest], opened, total_pressure_released))
+        states = new_states
+    best_pressure = max(best_orders.values())
+    for k, v in best_orders.items():
+        if v == best_pressure:
+            key = k
+    states: list[tuple[int, set, int]] = [
+        (
+            valve_to_num['AA'],
+            set(
+                filter(
+                    lambda x: valves_rates[num_to_valve[x]] <= 0,
+                    [valve_to_num[i] for i in valve_to_num]
+                )
+            ).union(set(map(int, key[1].split(',')))),
+            best_pressure
+        )
+    ]
+    for t in range(1, TOTAL_TIME + 1):
+        new_states = []
+        for current_location, opened, total_pressure_released in states:
+            key = (current_location, ','.join(map(str, opened)))
+            if key in best_orders:
+                if total_pressure_released <= best_orders[key]:
+                    continue
+                else:
+                    pass
+
+            best_orders[key] = total_pressure_released
+
+            flow_rate = valves_rates[num_to_valve[current_location]]
+            children = graph[num_to_valve[current_location]]
+            if current_location in opened:
+                pass
+            elif flow_rate <= 0:
+                pass
+            else:
+                new_states.append(
+                    (
+                        current_location,
+                        opened.union({current_location}),
+                        total_pressure_released + flow_rate * (TOTAL_TIME - t)
+                    )
+                )
+            for dest in children:
+                new_states.append((valve_to_num[dest], opened, total_pressure_released))
+        states = new_states
+    return max(best_orders.values())
 
 
 def read_file_lines(file_to_read: str, strip: bool = True) -> typing.List[str]:
