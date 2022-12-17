@@ -3,55 +3,58 @@ import typing
 import utils
 
 
-def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
-    def get_figure_coords(figure_type: str, start_coord: typing.Tuple[int, int]) -> typing.List[typing.Tuple[int, int]]:
-        if figure_type == '-':
-            return [(start_coord[0] + i, start_coord[1]) for i in range(4)]
-        elif figure_type == '+':
-            return [
-                (start_coord[0], start_coord[1]),
-                (start_coord[0], start_coord[1] + 1),
-                (start_coord[0] + 1, start_coord[1]),
-                (start_coord[0], start_coord[1] - 1),
-                (start_coord[0] - 1, start_coord[1])
-            ]
-        elif figure_type == 'L':
-            return [
-                (start_coord[0], start_coord[1]),
-                (start_coord[0], start_coord[1] - 1),
-                (start_coord[0], start_coord[1] - 2),
-                (start_coord[0] - 1, start_coord[1] - 2),
-                (start_coord[0] - 2, start_coord[1] - 2),
-            ]
-        elif figure_type == '|':
-            return [
-                (start_coord[0], start_coord[1]),
-                (start_coord[0], start_coord[1] - 1),
-                (start_coord[0], start_coord[1] - 2),
-                (start_coord[0], start_coord[1] - 3),
-            ]
-        elif figure_type == '[]':
-            return [
-                (start_coord[0], start_coord[1]),
-                (start_coord[0], start_coord[1] - 1),
-                (start_coord[0] + 1, start_coord[1]),
-                (start_coord[0] + 1, start_coord[1] - 1),
-            ]
+def get_figure_coords(figure_type: str, start_coord: typing.Tuple[int, int]) -> typing.List[typing.Tuple[int, int]]:
+    if figure_type == '-':
+        return [(start_coord[0] + i, start_coord[1]) for i in range(4)]
+    elif figure_type == '+':
+        return [
+            (start_coord[0], start_coord[1]),
+            (start_coord[0], start_coord[1] + 1),
+            (start_coord[0] + 1, start_coord[1]),
+            (start_coord[0], start_coord[1] - 1),
+            (start_coord[0] - 1, start_coord[1])
+        ]
+    elif figure_type == 'L':
+        return [
+            (start_coord[0], start_coord[1]),
+            (start_coord[0], start_coord[1] - 1),
+            (start_coord[0], start_coord[1] - 2),
+            (start_coord[0] - 1, start_coord[1] - 2),
+            (start_coord[0] - 2, start_coord[1] - 2),
+        ]
+    elif figure_type == '|':
+        return [
+            (start_coord[0], start_coord[1]),
+            (start_coord[0], start_coord[1] - 1),
+            (start_coord[0], start_coord[1] - 2),
+            (start_coord[0], start_coord[1] - 3),
+        ]
+    elif figure_type == '[]':
+        return [
+            (start_coord[0], start_coord[1]),
+            (start_coord[0], start_coord[1] - 1),
+            (start_coord[0] + 1, start_coord[1]),
+            (start_coord[0] + 1, start_coord[1] - 1),
+        ]
+    else:
+        raise Exception(f'weird figure: {figure_type} {start_coord}')
+
+
+def print_grid(grid: typing.Dict[int, typing.List[str]]):
+    if grid == {}:
+        return
+    grid_width = len(list(grid.values())[0])
+    for i in range(max(grid.keys()), 0, -1):
+        s = f'{i:<2}'
+        if i not in grid:
+            s += '.' * grid_width
         else:
-            raise Exception(f'weird figure: {figure_type} {start_coord}')
+            s += ''.join(grid[i])
+        print(s)
+    print()
 
-    def print_grid(grid: typing.Dict[int, typing.List[str]]):
-        if grid == {}:
-            return
-        for i in range(max(grid.keys()), 0, -1):
-            s = f'{i:<2}'
-            if i not in grid:
-                s += '.' * grid_width
-            else:
-                s += ''.join(grid[i])
-            print(s)
-        print()
 
+def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
     figures = utils.RepeatingSequence(
         [
             '-', '+', 'L', '|', '[]', '-'
