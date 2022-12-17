@@ -122,7 +122,7 @@ def read_file_lines(file_to_read: str, strip: bool = True) -> typing.List[str]:
 
 if __name__ == '__main__':
     files_to_run = [
-        # 'sample.txt',
+        'sample.txt',
         'input.txt'
     ]
     for filename in files_to_run:

@@ -23,7 +23,8 @@ def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
 
     states: list[tuple[int, set, int]] = [
         (
-            valve_to_num['AA'], set(
+            valve_to_num['AA'],
+            set(
                 filter(
                     lambda x: valves_rates[num_to_valve[x]] <= 0,
                     [valve_to_num[i] for i in valve_to_num]
@@ -133,6 +134,8 @@ def part_2(input_lines: typing.List[str]) -> typing.Union[int, str]:
     for k, v in best_orders.items():
         if v == best_pressure:
             key = k
+
+    # literally making same shit twice, but now we have many valves open and have some pressure
     states: list[tuple[int, set, int]] = [
         (
             valve_to_num['AA'],
@@ -190,7 +193,7 @@ def read_file_lines(file_to_read: str, strip: bool = True) -> typing.List[str]:
 
 if __name__ == '__main__':
     files_to_run = [
-        # 'sample.txt',
+        'sample.txt',
         'input.txt'
     ]
     for filename in files_to_run:
