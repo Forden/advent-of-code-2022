@@ -1,5 +1,7 @@
 import dataclasses
+import queue
 import typing
+from multiprocessing import Pool
 
 
 def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
@@ -42,8 +44,68 @@ def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
     return result
 
 
+@dataclasses.dataclass
+class Cube:
+    x: int
+    y: int
+    z: int
+
+    def __hash__(self):
+        return hash((self.x, self.y, self.z))
+
+    def __repr__(self):
+        return f'Cube(x={self.x} y={self.y} z={self.z})'
+
+
 def part_2(input_lines: typing.List[str]) -> typing.Union[int, str]:
-    result = 0
+    def check_reaches_outside(cube: Cube):
+        q = queue.Queue()
+        seen = set()
+        q.put(cube)
+        while not q.empty():
+            checking = q.get()
+            if checking in seen:
+                continue
+            if checking in cubes:
+                continue
+            seen.add(checking)
+            if len(seen) > 5000:
+                return True
+            for _ in range(2):
+                q.put(Cube(checking.x + 1, checking.y, checking.z))
+                q.put(Cube(checking.x - 1, checking.y, checking.z))
+                q.put(Cube(checking.x, checking.y + 1, checking.z))
+                q.put(Cube(checking.x, checking.y - 1, checking.z))
+                q.put(Cube(checking.x, checking.y, checking.z + 1))
+                q.put(Cube(checking.x, checking.y, checking.z - 1))
+
+        return False
+
+    cubes = set()
+    for cube in input_lines:
+        x, y, z, = map(int, cube.split(','))
+        cubes.add(Cube(x, y, z))
+
+    global check_cube
+
+    def check_cube(i: Cube) -> int:
+        result = 0
+        if check_reaches_outside(Cube(i.x + 1, i.y, i.z)):
+            result += 1
+        if check_reaches_outside(Cube(i.x - 1, i.y, i.z)):
+            result += 1
+        if check_reaches_outside(Cube(i.x, i.y + 1, i.z)):
+            result += 1
+        if check_reaches_outside(Cube(i.x, i.y - 1, i.z)):
+            result += 1
+        if check_reaches_outside(Cube(i.x, i.y, i.z + 1)):
+            result += 1
+        if check_reaches_outside(Cube(i.x, i.y, i.z - 1)):
+            result += 1
+        return result
+
+    with Pool() as p:
+        result = sum(list(p.map(check_cube, cubes)))
     return result
 
 
