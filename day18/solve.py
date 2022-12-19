@@ -4,46 +4,6 @@ import typing
 from multiprocessing import Pool
 
 
-def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
-    @dataclasses.dataclass
-    class Cube:
-        x: int
-        y: int
-        z: int
-
-        def __hash__(self):
-            return hash((self.x, self.y, self.z))
-
-    result = 0
-
-    def get_cube_exposed_sides_count(
-            cube: Cube, grid: typing.Set[Cube]
-    ) -> int:
-        res = 6
-        for i in grid:
-            if i.x == cube.x + 1 and i.y == cube.y and i.z == cube.z:
-                res -= 1
-            elif i.x == cube.x - 1 and i.y == cube.y and i.z == cube.z:
-                res -= 1
-            elif i.x == cube.x and i.y == cube.y + 1 and i.z == cube.z:
-                res -= 1
-            elif i.x == cube.x and i.y == cube.y - 1 and i.z == cube.z:
-                res -= 1
-            elif i.x == cube.x and i.y == cube.y and i.z == cube.z + 1:
-                res -= 1
-            elif i.x == cube.x and i.y == cube.y and i.z == cube.z - 1:
-                res -= 1
-        return res
-
-    cubes = set()
-    for cube in input_lines:
-        x, y, z, = map(int, cube.split(','))
-        cubes.add(Cube(x, y, z))
-    for i in cubes:
-        result += get_cube_exposed_sides_count(i, cubes)
-    return result
-
-
 @dataclasses.dataclass
 class Cube:
     x: int
@@ -55,6 +15,37 @@ class Cube:
 
     def __repr__(self):
         return f'Cube(x={self.x} y={self.y} z={self.z})'
+
+
+def get_cube_exposed_sides_count(
+        cube: Cube, grid: typing.Set[Cube]
+) -> int:
+    res = 6
+    for i in grid:
+        if i.x == cube.x + 1 and i.y == cube.y and i.z == cube.z:
+            res -= 1
+        elif i.x == cube.x - 1 and i.y == cube.y and i.z == cube.z:
+            res -= 1
+        elif i.x == cube.x and i.y == cube.y + 1 and i.z == cube.z:
+            res -= 1
+        elif i.x == cube.x and i.y == cube.y - 1 and i.z == cube.z:
+            res -= 1
+        elif i.x == cube.x and i.y == cube.y and i.z == cube.z + 1:
+            res -= 1
+        elif i.x == cube.x and i.y == cube.y and i.z == cube.z - 1:
+            res -= 1
+    return res
+
+
+def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
+    result = 0
+    cubes = set()
+    for cube in input_lines:
+        x, y, z, = map(int, cube.split(','))
+        cubes.add(Cube(x, y, z))
+    for i in cubes:
+        result += get_cube_exposed_sides_count(i, cubes)
+    return result
 
 
 def part_2(input_lines: typing.List[str]) -> typing.Union[int, str]:
@@ -81,11 +72,6 @@ def part_2(input_lines: typing.List[str]) -> typing.Union[int, str]:
 
         return False
 
-    cubes = set()
-    for cube in input_lines:
-        x, y, z, = map(int, cube.split(','))
-        cubes.add(Cube(x, y, z))
-
     global check_cube
 
     def check_cube(i: Cube) -> int:
@@ -104,8 +90,14 @@ def part_2(input_lines: typing.List[str]) -> typing.Union[int, str]:
             result += 1
         return result
 
+    cubes = set()
+    for cube in input_lines:
+        x, y, z, = map(int, cube.split(','))
+        cubes.add(Cube(x, y, z))
+
     with Pool() as p:
         result = sum(list(p.map(check_cube, cubes)))
+
     return result
 
 
