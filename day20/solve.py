@@ -22,8 +22,24 @@ def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
 
 
 def part_2(input_lines: typing.List[str]) -> typing.Union[int, str]:
-    result = 0
-    return result
+    class Number:
+        def __init__(self, n):
+            self.n = n
+
+    arrangement = collections.deque(map(Number, map(lambda x: x * 811589153, map(int, input_lines))))
+    order = arrangement.copy()
+
+    for _ in range(10):
+        for i in order:
+            curr_position = arrangement.index(i)
+            arrangement.rotate(-curr_position)
+            arrangement.popleft()
+            arrangement.rotate(-i.n)
+            arrangement.insert(0, i)
+
+    arrangement = list(map(lambda x: x.n, arrangement))
+
+    return sum(arrangement[(arrangement.index(0) + i) % len(arrangement)] for i in [1000, 2000, 3000])
 
 
 def read_file_lines(file_to_read: str, strip: bool = True) -> typing.List[str]:
