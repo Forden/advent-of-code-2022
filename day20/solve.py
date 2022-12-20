@@ -1,10 +1,24 @@
+import collections
 import typing
-import utils
 
 
 def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
-    result = 0
-    return result
+    class Number:
+        def __init__(self, n):
+            self.n = n
+
+    arrangement = collections.deque(map(Number, map(int, input_lines)))
+
+    for i in list(arrangement):
+        curr_position = arrangement.index(i)
+        arrangement.rotate(-curr_position)
+        arrangement.popleft()
+        arrangement.rotate(-i.n)
+        arrangement.insert(0, i)
+
+    arrangement = list(map(lambda x: x.n, arrangement))
+
+    return sum(arrangement[(arrangement.index(0) + i) % len(arrangement)] for i in [1000, 2000, 3000])
 
 
 def part_2(input_lines: typing.List[str]) -> typing.Union[int, str]:
