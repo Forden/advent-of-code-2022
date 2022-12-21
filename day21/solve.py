@@ -4,7 +4,28 @@ import utils
 
 def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
     result = 0
-    return result
+    memory = {}
+    while 'root' not in memory:
+        for i in input_lines:
+            monkey, data = i.split(': ')
+            if data.isdigit():
+                data = int(data)
+                memory[monkey] = data
+            else:
+                first, oper, second = data.split()
+                if first in memory and second in memory:
+                    if oper == '+':
+                        memory[monkey] = memory[first] + memory[second]
+                    elif oper == '-':
+                        memory[monkey] = memory[first] - memory[second]
+                    elif oper == '/':
+                        memory[monkey] = memory[first] / memory[second]
+                    elif oper == '*':
+                        memory[monkey] = memory[first] * memory[second]
+                    else:
+                        print('weird', monkey, data)
+
+    return memory['root']
 
 
 def part_2(input_lines: typing.List[str]) -> typing.Union[int, str]:
