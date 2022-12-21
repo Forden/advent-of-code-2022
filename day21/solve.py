@@ -1,5 +1,4 @@
 import typing
-import utils
 
 
 def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
@@ -28,9 +27,88 @@ def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
     return memory['root']
 
 
+def part_2_test(input_lines: typing.List[str]) -> int:
+    memory = {}
+    while 'humn' not in memory:
+        for i in input_lines:
+            monkey, data = i.split(': ')
+            if data.isdigit():
+                data = int(data)
+                memory[monkey] = data
+            else:
+                first, oper, second = data.split()
+                if first in memory and second in memory:
+                    if oper == '+':
+                        memory[monkey] = memory[first] + memory[second]
+                    elif oper == '-':
+                        memory[monkey] = memory[first] - memory[second]
+                    elif oper == '/':
+                        memory[monkey] = memory[first] / memory[second]
+                    elif oper == '*':
+                        memory[monkey] = memory[first] * memory[second]
+                    else:
+                        print('weird', monkey, data)
+
+    return memory['humn']
+
+
 def part_2(input_lines: typing.List[str]) -> typing.Union[int, str]:
-    result = 0
-    return result
+    global check
+
+    def check(checking: int) -> typing.Dict[str, typing.Union[int, float]]:
+        memory = {}
+        while 'root' not in memory:
+            for i in input_lines:
+                monkey, data = i.split(': ')
+                if monkey == 'humn':
+                    memory[monkey] = checking
+                else:
+                    if data.isdigit():
+                        data = int(data)
+                        memory[monkey] = data
+                    else:
+                        first, oper, second = data.split()
+                        if monkey == 'root':
+                            oper = '='
+                        if first in memory and second in memory:
+                            if oper == '+':
+                                memory[monkey] = memory[first] + memory[second]
+                            elif oper == '-':
+                                memory[monkey] = memory[first] - memory[second]
+                            elif oper == '/':
+                                memory[monkey] = memory[first] / memory[second]
+                            elif oper == '*':
+                                memory[monkey] = memory[first] * memory[second]
+                            elif oper == '=':
+                                print(
+                                    i,
+                                    memory[first], memory[second],
+                                    memory[first] > memory[second],
+                                    memory[first] - memory[second]
+                                )
+                                memory[monkey] = memory[first] == memory[second]
+                            else:
+                                print('weird', monkey, data)
+        return memory
+
+    res = ['1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0']
+    min_diff = 9999999999999999999999999999999
+    for i in range(len(res)):
+        print(res)
+        i_to_set = 9
+        for test_int in range(1 if i == 0 else 0, 10):
+            imag = res
+            imag[i] = str(test_int)
+            test_res = check(int(''.join(imag)))
+            if test_res['wrvq'] - test_res['vqfc'] == 0:
+                return int(''.join(imag))
+            if test_res['wrvq'] - test_res['vqfc'] < 0:
+                break
+            if test_res['wrvq'] - test_res['vqfc'] <= min_diff:
+                min_diff = test_res['wrvq'] - test_res['vqfc']
+                i_to_set = test_int
+        res[i] = str(i_to_set)
+    return 0
 
 
 def read_file_lines(file_to_read: str, strip: bool = True) -> typing.List[str]:
@@ -46,7 +124,7 @@ def read_file_lines(file_to_read: str, strip: bool = True) -> typing.List[str]:
 
 if __name__ == '__main__':
     files_to_run = [
-        'sample.txt',
+        # 'sample.txt',
         'input.txt'
     ]
     for filename in files_to_run:
