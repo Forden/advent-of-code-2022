@@ -2,7 +2,6 @@ import typing
 
 
 def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
-    result = 0
     memory = {}
     while 'root' not in memory:
         for i in input_lines:
@@ -53,8 +52,6 @@ def part_2_test(input_lines: typing.List[str]) -> int:
 
 
 def part_2(input_lines: typing.List[str]) -> typing.Union[int, str]:
-    global check
-
     def check(checking: int) -> typing.Dict[str, typing.Union[int, float]]:
         memory = {}
         while 'root' not in memory:
@@ -80,21 +77,12 @@ def part_2(input_lines: typing.List[str]) -> typing.Union[int, str]:
                             elif oper == '*':
                                 memory[monkey] = memory[first] * memory[second]
                             elif oper == '=':
-                                print(
-                                    i,
-                                    memory[first], memory[second],
-                                    memory[first] > memory[second],
-                                    memory[first] - memory[second]
-                                )
                                 memory[monkey] = memory[first] == memory[second]
-                            else:
-                                print('weird', monkey, data)
         return memory
 
     res = ['1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0']
     min_diff = 9999999999999999999999999999999
     for i in range(len(res)):
-        print(res)
         i_to_set = 9
         for test_int in range(1 if i == 0 else 0, 10):
             imag = res
