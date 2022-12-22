@@ -24,7 +24,11 @@ def part_2():
         first, second = pair.split(',')
         first_range = tuple(map(int, first.split('-')))
         second_range = tuple(map(int, second.split('-')))
-        if set([i for i in range(first_range[0], first_range[1]+1, 1)]).intersection([i for i in range(second_range[0], second_range[1]+1, 1)]):
+        if set(
+                [i for i in range(first_range[0], first_range[1] + 1, 1)]
+        ).intersection(
+            [i for i in range(second_range[0], second_range[1] + 1, 1)]
+        ):
             result += 1
     return result
 
