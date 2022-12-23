@@ -27,5 +27,5 @@ def get_neighbours_in_2d_list(
                 continue
             if y == row_ind and x == cell_ind:
                 continue
-            res.append((y, x))
+            res.append((x, y))
     return res
