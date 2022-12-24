@@ -1,5 +1,4 @@
 import typing
-from collections import deque
 
 import utils
 
