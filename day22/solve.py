@@ -36,7 +36,7 @@ def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
             res.append(s)
         for y, row in enumerate(grid):
             s = f'{y + 1:<3} {"".join(map(lambda x: x if x else "+", row))}'
-            if visited is not None:
+            if visited is not None and False:
                 s = list(s)
                 for i in visited:
                     if i[1] == y:
@@ -100,9 +100,19 @@ def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
                     result[0] += 1
             elif result[2] == 180:
                 if result[0] - 1 == -1:
-                    result[0] = len(grid[result[1]]) - 1 - grid[result[1]][::-1].index('.')
+                    first_dot_ind = len(grid[result[1]]) - 1 - grid[result[1]][::-1].index('.')
+                    first_wall_ind = len(grid[result[1]]) - 1 - grid[result[1]][::-1].index('#')
+                    if first_wall_ind > first_dot_ind:
+                        return False, [-1, -1, -1]
+                    else:
+                        result[0] = first_dot_ind
                 elif grid[result[1]][result[0] - 1] is None:
-                    result[0] = len(grid[result[1]]) - 1 - grid[result[1]][::-1].index('.')
+                    first_dot_ind = len(grid[result[1]]) - 1 - grid[result[1]][::-1].index('.')
+                    first_wall_ind = len(grid[result[1]]) - 1 - grid[result[1]][::-1].index('#')
+                    if first_wall_ind > first_dot_ind:
+                        return False, [-1, -1, -1]
+                    else:
+                        result[0] = first_dot_ind
                 elif grid[result[1]][result[0] - 1] == '#':
                     return False, [-1, -1, -1]
                 else:
@@ -139,7 +149,7 @@ def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
                     return False, [-1, -1, -1]
                 else:
                     result[1] += 1
-        print(f'{current_position=} {result=} {cmd=}')
+        # print(f'{current_position=} {result=} {cmd=}')
         return True, result
 
     cmds = parse_commands(input_lines[-1])
@@ -156,12 +166,20 @@ def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
         for x, cell in enumerate(row):
             if cell in ['.', '#']:
                 grid[y][x] = cell
-    current_position = [grid[y].index('.'), 0, 0]
+    current_position = None
+    for y, row in enumerate(input_lines[:-2]):
+        if current_position is None:
+            for x, cell in enumerate(row):
+                if cell == '.':
+                    current_position = [x, y, 0]
+                    break
+    # current_position = [grid[y].index('.'), 0, 0]
+    # print(y, current_position)
     # print(f'end = ({current_position[1] + 1},{current_position[0] + 1})')
     visited = [current_position]
     # print_grid(grid, current_position)
     for cmd in cmds:
-        print(f'current {cmd=}')
+        # print(f'current {cmd=}')
         if isinstance(cmd, str):
             # next_position = get_next_position(grid, current_position, cmd)
             if cmd == 'R':
@@ -172,10 +190,10 @@ def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
             # print_grid(grid, current_position, visited)
         else:
             for cur_step in range(cmd):
-                time.sleep(.5)
+                # time.sleep(.5)
                 possible = True
                 possible, next_position = get_next_position(grid, current_position, '+')
-                print(f'{possible=}')
+                # print(f'{possible=}')
                 # print(f'{current_position=}, {next_position=}')
                 # if next_position == current_position:
                 #     possible = False
@@ -188,11 +206,11 @@ def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
                 if possible:
                     current_position = [*next_position]
                     visited.append(current_position)
-                    print_grid(grid, current_position, visited)
+                    # print_grid(grid, current_position, visited)
                 else:
                     break
         # print_grid(grid, current_position, visited)
-        # print(f'end = ({current_position[1]+1},{current_position[0]+1})')
+        print(f'end = ({current_position[1] + 1},{current_position[0] + 1})')
         # print(
         #     f'{current_position=}, {next_position=}, {cur_step+1=}/{cmd=}, {grid[next_position[1]][next_position[0]]=}'
         # )
@@ -224,8 +242,8 @@ def read_file_lines(file_to_read: str, strip: bool = True) -> typing.List[str]:
 
 if __name__ == '__main__':
     files_to_run = [
-        'sample.txt',
-        # 'input.txt',
+        # 'sample.txt',
+        'input.txt',
         # 'input2.txt'
     ]
     for filename in files_to_run:
