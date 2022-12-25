@@ -162,7 +162,8 @@ def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
         grid[y][x] = 'X'
     grid[player_coords[1]][player_coords[0]] = 'E'
 
-    cache = fill_cache(grid, blizzards_coords, math.lcm(len(grid) - 2, len(grid[0]) - 2))
+    blizzards_period = math.lcm(len(grid) - 2, len(grid[0]) - 2)
+    cache = fill_cache(grid, blizzards_coords, blizzards_period)
 
     moves = [
         [0, 1],
@@ -203,7 +204,7 @@ def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
             ):  # not inside walls
                 continue
 
-            if will_be_occupied(cache, new_x, new_y, t + 1):  # will be occupied on next minute
+            if will_be_occupied(cache, new_x, new_y, (t + 1) % blizzards_period):  # will be occupied on next minute
                 continue
 
             Q.put(
@@ -252,7 +253,8 @@ def part_2(input_lines: typing.List[str]) -> typing.Union[int, str]:
         grid[y][x] = 'X'
     grid[player_coords[1]][player_coords[0]] = 'E'
 
-    cache = fill_cache(grid, blizzards_coords, math.lcm(len(grid) - 2, len(grid[0]) - 2))
+    blizzards_period = math.lcm(len(grid) - 2, len(grid[0]) - 2)
+    cache = fill_cache(grid, blizzards_coords, blizzards_period)
 
     moves = [
         [0, 1],
@@ -262,7 +264,7 @@ def part_2(input_lines: typing.List[str]) -> typing.Union[int, str]:
     ]
     Q = queue.Queue()
     Q.put(
-        (player_coords[0], player_coords[1], 0)
+        (*start_coord, 0, False, False)  # x, y, starting time, visited end, visited start
     )
     visited = set()
     while not Q.empty():
@@ -271,10 +273,16 @@ def part_2(input_lines: typing.List[str]) -> typing.Union[int, str]:
             continue
         visited.add(checking)
 
-        x, y, t = checking
+        x, y, t, visited_end_p1, visited_start_p2 = checking
 
         if (x, y) == exit_coord:
-            return t
+            if visited_end_p1 and visited_start_p2:  # already visited end and start
+                return t
+            visited_end_p1 = True  # just visited end, heading start
+
+        if (x, y) == start_coord:
+            if visited_end_p1:  # if only already visited end
+                visited_start_p2 = True
 
         for checking_move_x, checking_move_y in [*moves, [0, 0]]:
             new_x, new_y = x + checking_move_x, y + checking_move_y
@@ -293,11 +301,11 @@ def part_2(input_lines: typing.List[str]) -> typing.Union[int, str]:
             ):  # not inside walls
                 continue
 
-            if will_be_occupied(cache, new_x, new_y, t + 1):  # will be occupied on next minute
+            if will_be_occupied(cache, new_x, new_y, (t + 1) % blizzards_period):  # will be occupied on next minute
                 continue
 
             Q.put(
-                (new_x, new_y, t + 1)
+                (new_x, new_y, t + 1, visited_end_p1, visited_start_p2)
             )
 
     return result
@@ -317,7 +325,7 @@ def read_file_lines(file_to_read: str, strip: bool = True) -> typing.List[str]:
 if __name__ == '__main__':
     files_to_run = [
         'sample.txt',
-        # 'input.txt'
+        'input.txt'
     ]
     for filename in files_to_run:
         file_content = read_file_lines(filename, strip=True)
@@ -326,6 +334,6 @@ if __name__ == '__main__':
             continue
         print(f'part 1 for {filename}')
         print(part_1(file_content.copy()))
-        # print(f'part 2 for {filename}')
-        # print(part_2(file_content.copy()))
+        print(f'part 2 for {filename}')
+        print(part_2(file_content.copy()))
         print()
