@@ -3,8 +3,6 @@ import queue
 import time
 import typing
 
-import utils
-
 
 def print_map(
         source: typing.List[str],
@@ -63,75 +61,69 @@ def print_map(
     print(f'took {round(time.time() - t, 3)} sec to render map')
 
 
-def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
-    def get_new_blizz_coord(x: int, y: int, direction: int, blizzard_id: int) -> typing.Tuple[int, int, int, int]:
-        new_x, new_y = x, y
-        if direction == 0:
-            if (x + 1) == (len(input_lines[0]) - 1):
-                new_x = 1
-            else:
-                new_x = x + 1
-        elif direction == 90:
-            if (y - 1) == 0:
-                new_y = len(input_lines) - 2
-            else:
-                new_y = y - 1
-        elif direction == 180:
-            if (x - 1) == 0:
-                new_x = len(input_lines[0]) - 2
-            else:
-                new_x = x - 1
-        elif direction == 270:
-            if (y + 1) == len(input_lines) - 1:
-                new_y = 1
-            else:
-                new_y = y + 1
-        return new_x, new_y, direction, blizzard_id
+def get_new_blizz_coord(
+        grid: typing.List[typing.List[str]], x: int, y: int, direction: int, blizzard_id: int
+) -> typing.Tuple[int, int, int, int]:
+    new_x, new_y = x, y
+    if direction == 0:
+        if (x + 1) == (len(grid[0]) - 1):
+            new_x = 1
+        else:
+            new_x = x + 1
+    elif direction == 90:
+        if (y - 1) == 0:
+            new_y = len(grid) - 2
+        else:
+            new_y = y - 1
+    elif direction == 180:
+        if (x - 1) == 0:
+            new_x = len(grid[0]) - 2
+        else:
+            new_x = x - 1
+    elif direction == 270:
+        if (y + 1) == len(grid) - 1:
+            new_y = 1
+        else:
+            new_y = y + 1
+    return new_x, new_y, direction, blizzard_id
 
-    def get_new_coords(
-            old_coords: typing.Iterable[typing.Tuple[int, int, int, int]]
-    ) -> typing.Dict[typing.Tuple[int, int, int, int], typing.Tuple[int, int, int, int]]:
-        new_blizzards_coords: typing.Dict[typing.Tuple[int, int, int, int], typing.Tuple[int, int, int, int]] = {
-            i: i for i in old_coords
-        }
-        for x, y, direction, blizzard_id in old_coords:
-            new_blizzards_coords[(x, y, direction, blizzard_id)] = get_new_blizz_coord(x, y, direction, blizzard_id)
-        return new_blizzards_coords
 
-    def get_possible_steps(
-            grid: typing.List[typing.List[str]],
-            player_position: typing.Tuple[int, int]
-    ) -> typing.List[typing.Tuple[int, int]]:
-        all_neighbours = utils.get_neighbours_in_2d_list(
-            grid, player_position[1], player_position[0], allow_diagonal_steps=False
-        )
-        res = []
-        for possible_x, possible_y in all_neighbours:
-            if grid[possible_y][possible_x] != '.':
-                continue
-            res.append((possible_x, possible_y))
-        return res
+def get_new_coords(
+        grid: typing.List[typing.List[str]],
+        old_coords: typing.Iterable[typing.Tuple[int, int, int, int]]
+) -> typing.Dict[typing.Tuple[int, int, int, int], typing.Tuple[int, int, int, int]]:
+    new_blizzards_coords: typing.Dict[typing.Tuple[int, int, int, int], typing.Tuple[int, int, int, int]] = {
+        i: i for i in old_coords
+    }
+    for x, y, direction, blizzard_id in old_coords:
+        new_blizzards_coords[(x, y, direction, blizzard_id)] = get_new_blizz_coord(grid, x, y, direction, blizzard_id)
+    return new_blizzards_coords
 
-    def fill_cache(
-            blizzards_coords: typing.List[typing.Tuple[int, int, int, int]],
-            for_time: int
-    ) -> typing.Dict[typing.Tuple[int, int, int], bool]:
-        res = {}
+
+def fill_cache(
+        grid: typing.List[typing.List[str]],
+        blizzards_coords: typing.List[typing.Tuple[int, int, int, int]],
+        for_time: int
+) -> typing.Dict[typing.Tuple[int, int, int], bool]:
+    res = {}
+    for x, y, _, _ in blizzards_coords:
+        res[(x, y, 0)] = True
+    for t in range(1, for_time + 1):
+        new_blizzards_coords = get_new_coords(grid, blizzards_coords)
+        blizzards_coords = [*new_blizzards_coords.values()]
         for x, y, _, _ in blizzards_coords:
-            res[(x, y, 0)] = True
-        for t in range(1, for_time + 1):
-            new_blizzards_coords = get_new_coords(blizzards_coords)
-            blizzards_coords = [*new_blizzards_coords.values()]
-            for x, y, _, _ in blizzards_coords:
-                res[(x, y, t)] = True
-        return res
+            res[(x, y, t)] = True
+    return res
 
-    def will_be_occupied(
-            cache: typing.Dict[typing.Tuple[int, int, int], bool],
-            checking_x: int, checking_y: int, checking_time: int
-    ) -> bool:
-        return cache.get((checking_x, checking_y, checking_time), False)
 
+def will_be_occupied(
+        cache: typing.Dict[typing.Tuple[int, int, int], bool],
+        checking_x: int, checking_y: int, checking_time: int
+) -> bool:
+    return cache.get((checking_x, checking_y, checking_time), False)
+
+
+def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
     result = 0
     enter_exit_coords: typing.List[typing.Tuple[int, int]] = []
     for x, cell in enumerate(input_lines[0]):
@@ -170,9 +162,7 @@ def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
         grid[y][x] = 'X'
     grid[player_coords[1]][player_coords[0]] = 'E'
 
-    print_map(input_lines, blizzards_coords, enter_exit_coords, player_coords)
-
-    cache = fill_cache(blizzards_coords, math.lcm(len(grid) - 2, len(grid[0]) - 2))
+    cache = fill_cache(grid, blizzards_coords, math.lcm(len(grid) - 2, len(grid[0]) - 2))
 
     moves = [
         [0, 1],
@@ -194,8 +184,7 @@ def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
         x, y, t = checking
 
         if (x, y) == exit_coord:
-            print(t)
-            break
+            return t
 
         for checking_move_x, checking_move_y in [*moves, [0, 0]]:
             new_x, new_y = x + checking_move_x, y + checking_move_y
@@ -226,6 +215,91 @@ def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
 
 def part_2(input_lines: typing.List[str]) -> typing.Union[int, str]:
     result = 0
+    enter_exit_coords: typing.List[typing.Tuple[int, int]] = []
+    for x, cell in enumerate(input_lines[0]):
+        if cell != '#':
+            enter_exit_coords.append((x, 0))
+    for x, cell in enumerate(input_lines[-1]):
+        if cell != '#':
+            enter_exit_coords.append((x, len(input_lines) - 1))
+    player_coords = None
+    start_coord = list(filter(lambda a: a[1] == 0, enter_exit_coords))[0]
+    exit_coord = list(filter(lambda a: a[1] != 0, enter_exit_coords))[0]
+    blizzards_coords: typing.List[typing.Tuple[int, int, int, int]] = []
+    wall_coords: typing.List[typing.Tuple[int, int]] = []
+    for y, row in enumerate(input_lines):
+        for x, cell in enumerate(row):
+            if cell == 'E':
+                player_coords = (x, y)
+            elif cell == '#':
+                wall_coords.append((x, y))
+            elif cell == '.':
+                pass
+            else:
+                if cell == '>':
+                    direction = 0
+                elif cell == '^':
+                    direction = 90
+                elif cell == '<':
+                    direction = 180
+                else:
+                    direction = 270
+                blizzards_coords.append((x, y, direction, len(blizzards_coords)))
+    grid = [['.' for _ in range(len(input_lines[0]))] for _ in range(len(input_lines))]
+    for x, y in wall_coords:
+        grid[y][x] = '#'
+    for x, y, _, _ in blizzards_coords:
+        grid[y][x] = 'X'
+    grid[player_coords[1]][player_coords[0]] = 'E'
+
+    cache = fill_cache(grid, blizzards_coords, math.lcm(len(grid) - 2, len(grid[0]) - 2))
+
+    moves = [
+        [0, 1],
+        [1, 0],
+        [-1, 0],
+        [0, -1]
+    ]
+    Q = queue.Queue()
+    Q.put(
+        (player_coords[0], player_coords[1], 0)
+    )
+    visited = set()
+    while not Q.empty():
+        checking = Q.get()
+        if checking in visited:
+            continue
+        visited.add(checking)
+
+        x, y, t = checking
+
+        if (x, y) == exit_coord:
+            return t
+
+        for checking_move_x, checking_move_y in [*moves, [0, 0]]:
+            new_x, new_y = x + checking_move_x, y + checking_move_y
+            new_location = (new_x, new_y)
+
+            if (
+                    (
+                            not new_location in [start_coord, exit_coord]
+                    ) and not (
+                    (
+                            1 <= new_x <= len(grid[0]) - 2
+                    ) and (
+                            1 <= new_y <= len(grid) - 2
+                    )
+            )
+            ):  # not inside walls
+                continue
+
+            if will_be_occupied(cache, new_x, new_y, t + 1):  # will be occupied on next minute
+                continue
+
+            Q.put(
+                (new_x, new_y, t + 1)
+            )
+
     return result
 
 
@@ -242,8 +316,8 @@ def read_file_lines(file_to_read: str, strip: bool = True) -> typing.List[str]:
 
 if __name__ == '__main__':
     files_to_run = [
-        # 'sample.txt',
-        'input.txt'
+        'sample.txt',
+        # 'input.txt'
     ]
     for filename in files_to_run:
         file_content = read_file_lines(filename, strip=True)
@@ -252,6 +326,6 @@ if __name__ == '__main__':
             continue
         print(f'part 1 for {filename}')
         print(part_1(file_content.copy()))
-        print(f'part 2 for {filename}')
-        print(part_2(file_content.copy()))
+        # print(f'part 2 for {filename}')
+        # print(part_2(file_content.copy()))
         print()
