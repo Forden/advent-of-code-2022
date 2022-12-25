@@ -112,15 +112,6 @@ def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
             res.append((possible_x, possible_y))
         return res
 
-    def get_adjacency_lists(
-            grid: typing.List[typing.List[str]]
-    ) -> typing.Dict[typing.Tuple[int, int], typing.List[typing.Tuple[int, int]]]:
-        res = {}
-        for y, row in enumerate(grid):
-            for x, cell in enumerate(row):
-                res[x, y] = get_possible_steps(grid, (x, y))
-        return res
-
     def fill_cache(
             blizzards_coords: typing.List[typing.Tuple[int, int, int, int]],
             for_time: int
@@ -230,30 +221,6 @@ def part_1(input_lines: typing.List[str]) -> typing.Union[int, str]:
                 (new_x, new_y, t + 1)
             )
 
-            # while player_coords != exit_coord:
-    #     time.sleep(.5)
-    #     t = time.time()
-    #     new_blizzards_coords = get_new_coords(blizzards_coords)
-    #     for x, y in wall_coords:
-    #         grid[y][x] = '#'
-    #     for x, y, _, _ in blizzards_coords:
-    #         grid[y][x] = '.'
-    #     grid[player_coords[1]][player_coords[0]] = 'E'
-    #     blizzards_coords = [*new_blizzards_coords.values()]
-    #     for x, y, _, _ in blizzards_coords:
-    #         grid[y][x] = 'X'
-    #     # print_map(input_lines, list(map(tuple, blizzards_coords)), enter_exit_coords, player_coords)
-    #     adjacency_lists = get_adjacency_lists(grid)
-    #     _, dists, path_exists = utils.bfs(adjacency_lists, player_coords, exit_coord)
-    #     print(path_exists)
-    #     print(
-    #         *[
-    #             f'possible steps: {get_possible_steps(grid, player_coords)}',
-    #             f'took {round(time.time() - t, 3)} sec to make round'
-    #         ],
-    #         sep='\n'
-    #     )
-    # print(blizzards_coords)
     return result
 
 
